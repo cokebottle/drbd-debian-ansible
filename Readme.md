@@ -5,7 +5,7 @@
 git clone https://github.com/cokebottle/drbd-debian-ansible
 
 ```
-## Requirements 
+### Requirements 
 Linux box with 4GB RAM
 
 * Vagrant: https://www.vagrantup.com/downloads.html
@@ -17,10 +17,10 @@ Linux box with 4GB RAM
     vagrant ssh node-01
     vagrant ssh node-02
 
-# Delete and rebuild the whole setup
+### Delete and rebuild the whole setup
     vagrant destroy -f
 
-# The ansible playbook responsible for the instalation and configuration of the DRBD
+### The ansible playbook responsible for the instalation and configuration of the DRBD
 
 ```
 ---
@@ -70,6 +70,7 @@ Linux box with 4GB RAM
     state: restarted
 
 ```
+### Testing the deployment
 
 ```
 # Primary node only (node-01)
