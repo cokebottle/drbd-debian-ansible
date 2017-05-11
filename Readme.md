@@ -17,11 +17,61 @@ Linux box with 4GB RAM
     vagrant ssh node-01
     vagrant ssh node-02
 
-#Rebuild the whole setup
+# Delete and rebuild the whole setup
     vagrant destroy -f
+
+# The ansible playbook responsible for the instalation and configuration of the DRBD
+
+```
+---
+- name: install ntp
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items: 
+     - ntp
+     - ntpdate
+      
+- name: install drbd packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - drbd-utils
+
+- name: add drbd kernel module
+  modprobe:
+    name: drbd
+    state: present
+
+- name: copy configuration
+  copy:
+    src: data.res
+    dest: /etc/drbd.conf
+
+- name: disable 'usage-count'
+  lineinfile:
+    dest: /etc/drbd.d/global_common.conf
+    regexp: '^(.*)usage-count[ ]+((yes)|(no));(.*)$'
+    line: "\\1usage-count no;\\5"
+    backrefs: yes
+
+- name: create 'data' replicated block device is created
+  command: drbdadm create-md r0
+
+- name: check if 'data' replicated block device is created
+  command: drbdadm dstate r0
+  register: data_drbd_result
+  ignore_errors: True
+
+- name: start drbd sevice
+  service:
+    name: drbd
+    state: restarted
+
 ```
 
-
+```
 # Primary node only (node-01)
 sudo /sbin/drbdadm primary --force r0
 
