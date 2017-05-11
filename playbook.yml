@@ -1,0 +1,10 @@
+---
+# This playbook deploys drbd
+- hosts: all
+  gather_facts: yes
+  become: true
+  tasks:
+    - apt: update_cache=yes
+  roles:
+  - drbd
+
